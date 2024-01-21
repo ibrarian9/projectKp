@@ -3,22 +3,28 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Models\Lomba;
 use App\Models\Peserta;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 
 class PenggunaController extends Controller
 {
+    public function namaLomba(): Collection
+    {
+        return Lomba::all();
+    }
     public function index()
     {
-        return view('Dashboard');
+        $namaLomba = $this->namaLomba();
+        return view('Dashboard', compact('namaLomba'));
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $pengguna = [
             'name' => $request->name,
@@ -28,10 +34,11 @@ class PenggunaController extends Controller
         User::find($id)->update($pengguna);
         return redirect()->route('indexPengguna');
     }
-    public function tampilPengguna()
+    public function semuaUsers()
     {
-        $query = User::all();
-        return view('Pengguna.DataPengguna', compact('query'));
+        $namaLomba = $this->namaLomba();
+        $user = User::all();
+        return view('Pengguna.DataPengguna', compact(['user','namaLomba']));
     }
 
     public function tampilPeserta(): View
@@ -44,7 +51,8 @@ class PenggunaController extends Controller
 
     public function tambah(): View
     {
-        return view('Pengguna.TambahPengguna');
+        $namaLomba = $this->namaLomba();
+        return view('Pengguna.TambahPengguna', compact('namaLomba'));
     }
     public function simpan(Request $request)
     {

@@ -7,7 +7,7 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <!-- <h1 class="h3 mb-0 text-gray-800">Dashboard</h1> -->
-              <a href="{{ route('Pengguna.tambah') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+              <a href="{{ route('dataUsers.tambah') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
     <i></i> Tambah Pengguna
 </a>
 
@@ -30,25 +30,26 @@
                       <tr>
                         <th>No</th>
                         <th>Username</th>
-                        <th>Nama Universitas</th>
+                        <th>Nama</th>
                         <th>Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
 
                     @php($no=1)
-                    @foreach ($query as $row)
+                    @foreach ($user as $row)
                       <tr>
                         <td>{{$no++}}</td>
                         <td>{{$row->username}}</td>
+                        <td>{{$row->name}}</td>
                         <td>
                           <a
-                            href="{{route('Pengguna.edit',$row->id)}}"
+                            href="{{route('dataUsers.edit',$row->id)}}"
                             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                             ><i></i> Edit</a
                           >
                           <a
-                            href="{{route('Pengguna.hapus',$row->id)}}"
+                            href="{{route('dataUsers.hapus',$row->id)}}"
                             class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"
                             ><i></i> Hapus</a
                           >

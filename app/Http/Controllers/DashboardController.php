@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lomba;
 use App\Models\Peserta;
 use Illuminate\Http\Request;
 

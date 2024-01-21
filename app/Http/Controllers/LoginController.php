@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function login()
+    public function login(): View
     {
         return view('Login');
     }
@@ -35,7 +37,7 @@ class LoginController extends Controller
         }
     }
 
-    public function logout(Request $req)
+    public function logout(Request $req): RedirectResponse
     {
         Auth::logout();
         $req->session()->invalidate();

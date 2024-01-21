@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PenggunaController;
-use App\Http\Controllers\PenilaianController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,35 +27,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth','preventBack'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [PenggunaController::class, 'index'])->name('dashboard');
-    Route::get('/dataPeserta', [PenggunaController::class, 'tampilPeserta'])->name('dashboard');
 
-    // test
-    Route::controller(PenilaianController::class)->prefix('Penilaian')->group(function () {
-        Route::get('/PenilaianCerpen', 'tampilPenilaianCerpen')->name('PenilaianCerpen');
-        Route::get('/PenilaianDakwah', 'tampilPenilaianDakwah')->name('PenilaianDakwah');
-        Route::get('/PenilaianEsai', 'tampilPenilaianEsai')->name('PenilaianEsai');
-        Route::get('/PenilaianFotografi', 'tampilPenilaianFotografi')->name('PenilaianFotografi');
-        Route::get('/PenilaianHCMotion', 'tampilPenilaianHCMotion')->name('PenilaianHCMotion');
-        Route::get('/PenilaianLaguReligi', 'tampilPenilaianLaguReligi')->name('PenilaianLaguReligi');
-        Route::get('/PenilaianPaper', 'tampilPenilaianPaper')->name('PenilaianPaper');
-        Route::get('/PenilaianPoster', 'tampilPenilaianPoster')->name('PenilaianPoster');
-        Route::get('/PenilaianProposal', 'tampilPenilaianProposal')->name('PenilaianProposal');
-        Route::get('/PenilaianQiraah', 'tampilPenilaianQiraah')->name('PenilaianQiraah');
-
-        Route::get('tambah', 'tambahPeserta')->name('Peserta.tambahPeserta');
-        Route::post('tambah', 'simpan')->name('Peserta.simpan');
-        Route::get('edit/{id}', 'edit')->name('barang.edit');
-        Route::post('edit/{id}', 'update')->name('barang.tambah.update');
-        Route::get('hapus/{id}', 'hapus')->name('barang.hapus');
-    });
-    Route::controller(PenggunaController::class)->prefix('Pengguna')->group(function () {
-        Route::get('', 'tampilPengguna')->name('indexPengguna');
-        Route::get('tambah', 'tambah')->name('Pengguna.tambah');
-        Route::post('pengguna/tambah', 'simpan')->name('Pengguna.simpan');
-
-        Route::get('edit/{id}', 'edit')->name('Pengguna.edit');
+    Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
+        Route::get('/users', 'semuaUsers')->name('dataUsers');
+        Route::get('tambah', 'tambah')->name('dataUsers.tambah');
+        Route::post('tambah', 'simpan')->name('dataUsers.simpan');
+        Route::get('edit/{id}', 'edit')->name('dataUsers.edit');
         Route::post('edit/{id}', 'update')->name('Pengguna.tambah.update');
-        Route::get('hapus/{id}', 'hapus')->name('Pengguna.hapus');
+        Route::get('hapus/{id}', 'hapus')->name('dataUsers.hapus');
     });
 });
 

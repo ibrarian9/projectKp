@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('contents')
-  <form action="{{route('Pengguna.simpan')}}" method="post">
+  <form action="{{route('dataUsers.simpan')}}" method="post">
     @csrf
       <div class="container-fluid">
             <!-- Page Heading -->
@@ -31,7 +31,7 @@
          </div>
          <div class="card-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
-            <button type="submit" class="btn btn-danger">Batal</button>
+            <a type="submit" href="{{ route('dataUsers') }}" class="btn btn-danger">Batal</a>
          </div>
      <!-- </div> -->
     </div>

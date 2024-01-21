@@ -9,8 +9,8 @@ class Lomba extends Model
 {
     use HasFactory;
 
-    protected $table = ['lomba', 'tim_lomba'];
-    
+    protected $table = 'lomba';
+
     protected $fillable = ['id_tim_lomba', 'nama_lomba', 'anggota_tim_minimal', 'anggota_tim_maksimal'];
 
     protected $primaryKey = 'id_lomba';
