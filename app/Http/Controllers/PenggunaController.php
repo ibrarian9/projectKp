@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Lomba;
 use App\Models\Peserta;
+use App\Models\Tim;
+use App\Models\TimLomba;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -41,12 +43,16 @@ class PenggunaController extends Controller
         return view('Pengguna.DataPengguna', compact(['user','namaLomba']));
     }
 
-    public function tampilPeserta(): View
+    public function tampilPeserta($id)
     {
-        $join = Peserta::select(
-            "id_peserta","nama_peserta", "universitas.nama_universitas"
-        )->join("universitas", "universitas.id_universitas", "=", "peserta.id_universitas")->get();
-        return view('DataPeserta.DataPeserta', compact('join'));
+        $join = Tim::join('tim_lomba', 'tim.id_tim', '=', 'tim_lomba.id_tim')
+            ->join('peserta', 'tim.id_peserta', '=' , 'peserta.id_peserta')
+            ->join('universitas', 'peserta.id_universitas', '=', 'universitas.id_universitas')
+            ->select('tim.*', 'tim_lomba.*', 'peserta.*', 'universitas.*')
+            ->where('tim_lomba.id_lomba', $id)
+            ->get();
+        $namaLomba = $this->namaLomba();
+        return view('DataPeserta.DataPeserta', compact('join', 'namaLomba'));
     }
 
     public function tambah(): View

@@ -5,27 +5,28 @@ namespace App\Models;
 use App\Http\Controllers\Universitas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tim extends Model
 {
     use HasFactory;
 
-    protected $table = ['tim', 'tim_lomba'];
-    
-    protected $fillable = ['nama_tim', 'nama_universitas'];
+    protected $table = 'tim';
+
+    protected $fillable = ['id_tim', 'id_peserta', 'id_universitas'];
 
     protected $primaryKey = 'id_tim';
 
-    public function timKeUniversitas()
+    public function universitas(): BelongsTo
     {
         return $this->belongsTo(Universitas::class);
     }
-    public function timKePeserta()
+    public function peserta(): BelongsTo
     {
         return $this->belongsTo(Peserta::class);
     }
-    public function timUniv() {
-        return $this->join('universitas', 'peserta', 'tim.id_universitas', "=", 'universitas.id_universitas', '=', 'peserta.id_universitas')->select('peserta.*', 'universitas.nama_universitas');
-    }
 
+    public function timLomba() {
+        return $this->hasMany(TimLomba::class);
+    }
 }

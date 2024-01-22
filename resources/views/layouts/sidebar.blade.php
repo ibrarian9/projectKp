@@ -32,7 +32,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Modus Daring-1</h6>
                 @foreach($namaLomba as $row)
-                    <a class="collapse-item" href="cards.html">{{$row->nama_lomba}}</a>
+                    <a class="collapse-item" href="{{route('tampil', $row->id_lomba)}}">{{$row->nama_lomba}}</a>
                 @endforeach
             </div>
           </div>

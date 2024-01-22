@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lomba extends Model
 {
@@ -15,21 +16,8 @@ class Lomba extends Model
 
     protected $primaryKey = 'id_lomba';
 
-
-    public function lombaKeKategoriPenilaian()
+    public function timLomba(): HasMany
     {
-        return $this->hasMany('App\Models\KategoriPenilaian');
+        return $this->hasMany(TimLomba::class);
     }
-
-
-    // // Metode validasi data
-    // public function rules()
-    // {
-    //     return [
-    //         'kolom_1' => 'required',
-    //         'kolom_2' => 'numeric',
-    //         // ...
-    //     ];
-    // }
-
 }

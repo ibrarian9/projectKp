@@ -11,7 +11,7 @@ class Universitas extends Model
     use HasFactory;
 
     protected $table = 'universitas';
-    
+
     protected $fillable = ['nama_universitas'];
 
     protected $primaryKey = 'id_universitas';
@@ -21,15 +21,4 @@ class Universitas extends Model
     {
         return $this->hasMany(Peserta::class);
     }
-
-    // // Metode validasi data
-    // public function rules()
-    // {
-    //     return [
-    //         'kolom_1' => 'required',
-    //         'kolom_2' => 'numeric',
-    //         // ...
-    //     ];
-    // }
-
 }

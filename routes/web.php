@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PenggunaController;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function (){
-   return view('Login');
-});
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class, 'login'])->name('login');
@@ -27,6 +23,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth','preventBack'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [PenggunaController::class, 'index'])->name('dashboard');
+    Route::get('dataPengguna/{id}', [PenggunaController::class, 'tampilPeserta'])->name('tampil');
 
     Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
         Route::get('/users', 'semuaUsers')->name('dataUsers');
