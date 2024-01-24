@@ -23,7 +23,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth','preventBack'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [PenggunaController::class, 'index'])->name('dashboard');
-    Route::get('dataPengguna/{id}', [PenggunaController::class, 'tampilPeserta'])->name('tampil');
+    Route::get('/peserta/{id}', [PenggunaController::class, 'tampilPeserta'])->name('tampil');
+    Route::get('/penilaian/{id}', [PenggunaController::class, 'tampilPenilaian'])->name('penilaian');
 
     Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
         Route::get('/users', 'semuaUsers')->name('dataUsers');

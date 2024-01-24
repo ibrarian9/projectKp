@@ -12,7 +12,7 @@
             </form>
 
             <ul class="navbar-nav ml-auto">
-              <div class="topbar-divider d-none d-sm-block"></div>
+              <li class="topbar-divider d-none d-sm-block"></li>
 
               <li class="nav-item dropdown no-arrow">
                 <a
@@ -30,9 +30,8 @@
                   <img
                     class="img-profile rounded-circle"
                     src="{{url("../img/undraw_profile.svg")}}"
-                  />
+                    alt=""/>
                 </a>
-
 
               </li>
             </ul>

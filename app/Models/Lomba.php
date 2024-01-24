@@ -11,13 +11,10 @@ class Lomba extends Model
     use HasFactory;
 
     protected $table = 'lomba';
-
-    protected $fillable = ['id_tim_lomba', 'nama_lomba', 'anggota_tim_minimal', 'anggota_tim_maksimal'];
-
     protected $primaryKey = 'id_lomba';
 
-    public function timLomba(): HasMany
+    public function  tim(): HasMany
     {
-        return $this->hasMany(TimLomba::class);
+        return $this->hasMany(Tim::class, 'id_lomba');
     }
 }

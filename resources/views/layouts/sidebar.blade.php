@@ -2,7 +2,7 @@
         class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
         id="accordionSidebar"
       >
-        <a class="sidebar-brand d-flex align-items-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center" href="{{route('dashboard')}}">
           <div class="sidebar-brand-text mx-3">IPCOM</div>
         </a>
 
@@ -58,7 +58,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Modus Daring-1</h6>
               @foreach($namaLomba as $item)
-                    <a class="collapse-item" href="{{$item->id_tim_lomba}}">{{$item->nama_lomba}}</a>
+                    <a class="collapse-item" href="{{route('penilaian', $item->id_lomba)}}">{{$item->nama_lomba}}</a>
               @endforeach
             </div>
           </div>

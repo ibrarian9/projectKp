@@ -64,40 +64,48 @@
                                                 </th>
                                                 <th>Total</th>
                                                 <th>
-                                                    Penilaian Kualitatif Juri
+                                                    Komentar
                                                 </th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Muhammad Fari aja</td>
-                                                <td>UINSUSKA</td>
-                                                <td>20</td>
-                                                <td>30</td>
-                                                <td>20</td>
-                                                <td>30</td>
-                                                <td>100</td>
-                                                <td>
-                                                    Secara umum, aspek-aspek
-                                                    penilaian dikuasai sangat
-                                                    baik
-                                                </td>
-                                                <td>
-                                                    <a
-                                                        href="penilaian.html"
-                                                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                                        @if($dataPeserta->count() != 0)
+                                            @foreach($dataPeserta AS $item)
+                                                <tbody>
+                                                <tr>
+                                                    <td>{{$loop->iteration}}</td>
+                                                    <td>{{$item->peserta->nama_peserta}}</td>
+                                                    <td>{{$item->peserta->universitas->nama_universitas}}</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>0</td>
+                                                    <td>
+
+                                                    </td>
+                                                    <td>
+                                                        <a
+                                                            href=""
+                                                            class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                                                         ><i></i> Edit</a
-                                                    >
-                                                    <a
-                                                        href="penilaian.html"
-                                                        class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"
+                                                        >
+                                                        <a
+                                                            href=""
+                                                            class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"
                                                         ><i></i> Hapus</a
-                                                    >   
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                                        >   
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            @endforeach
+                                            <tfoot>
+                                            @else
+                                                <tr>
+                                                    <th colspan="10" class="text-center">Data Peserta Tidak Ada</th>
+                                                </tr>
+                                            @endif
+                                            </tfoot>
                                     </table>
                                 </div>
                             </div>
