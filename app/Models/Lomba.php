@@ -13,8 +13,8 @@ class Lomba extends Model
     protected $table = 'lomba';
     protected $primaryKey = 'id_lomba';
 
-    public function  tim(): HasMany
+    public function nomorLomba(): HasMany
     {
-        return $this->hasMany(Tim::class, 'id_lomba');
+        return $this->hasMany(NomorPerlombaan::class, 'id_lomba');
     }
 }

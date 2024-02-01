@@ -21,15 +21,6 @@
                                 </h4>
                             </div>
                         </div>
-                        <div
-                            class="d-sm-flex align-items-center justify-content-between mb-4"
-                        >
-                            <a
-                                href="adduser.html"
-                                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                                ><i></i> Tambah Data Peserta
-                            </a>
-                        </div>
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">
@@ -42,26 +33,12 @@
                                     <table
                                         class="table table-bordered"
                                         id="dataTable"
-                                        width="100%"
-                                        cellspacing="0"
                                     >
                                         <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama Peserta</th>
                                                 <th>Asal Universitas</th>
-                                                <th>Nilai Format Naskah</th>
-                                                <th>
-                                                    Nilai Kreativitas Gagasan
-                                                </th>
-                                                <th>
-                                                    Nilai Kesesuaian Tema/Topik
-                                                    yang disampaikan
-                                                </th>
-                                                <th>
-                                                    Nilai Keterpaduan
-                                                    Unsur/Struktur Cerpen Islami
-                                                </th>
                                                 <th>Total</th>
                                                 <th>
                                                     Komentar
@@ -77,24 +54,15 @@
                                                     <td>{{$item->peserta->nama_peserta}}</td>
                                                     <td>{{$item->peserta->universitas->nama_universitas}}</td>
                                                     <td>0</td>
-                                                    <td>0</td>
-                                                    <td>0</td>
-                                                    <td>0</td>
-                                                    <td>0</td>
                                                     <td>
 
                                                     </td>
                                                     <td>
                                                         <a
-                                                            href=""
+                                                            href="{{route('inputNilai', $item->id_peserta)}}"
                                                             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                                                        ><i></i> Edit</a
+                                                        ><i></i> Input Nilai</a
                                                         >
-                                                        <a
-                                                            href=""
-                                                            class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"
-                                                        ><i></i> Hapus</a
-                                                        >   
                                                     </td>
                                                 </tr>
                                                 </tbody>

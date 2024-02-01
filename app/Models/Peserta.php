@@ -6,6 +6,7 @@ use App\Models\Universitas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Peserta extends Model
@@ -18,7 +19,7 @@ class Peserta extends Model
 
     public function tim(): HasMany
     {
-        return $this->hasMany(Tim::class, 'id_tim');
+        return $this->HasMany(Tim::class, 'peserta_id');
     }
     public function universitas(): BelongsTo
     {

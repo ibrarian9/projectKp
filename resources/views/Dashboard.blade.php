@@ -16,20 +16,20 @@
             <!-- Content Row -->
             <div class="row">
               <!-- Earnings (Monthly) Card Example -->
-                @foreach($dataPeserta as $item)
+                @foreach($dataLomba as $item)
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card shadow h-100 py-2" style="border-left: 5px solid #BF1CC7;">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <a class="" href="{{ route('tampil', $item->id_lomba )}}">
+                        <a class="" href="{{ route('tampil', $item->id_lomba )}}" style="text-decoration: none">
                             <div class="col mr-2">
                                 <div
-                                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                                    class="text-xs font-weight-bold text-uppercase mb-1" style="color: #BF1CC7;"
                                 >
                                     {{ $item->nama_lomba }}
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    {{ $item->tim_count }}
+                                <div class="text-md mb-0 font-weight-bold text-gray-800">
+                                    Jumlah Peserta : {{ $item->tim_count }}
                                 </div>
                             </div>
                         </a>

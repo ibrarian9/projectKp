@@ -7,7 +7,7 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <!-- <h1 class="h3 mb-0 text-gray-800">Dashboard</h1> -->
-              <a href="{{ route('dataUsers.tambah') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+              <a href="{{ route('dataUsers.tambah') }}" class="d-none d-sm-inline-block btn btn-sm btn-dark shadow-sm" style="background-color: #BF1CC7">
     <i></i> Tambah Pengguna
 </a>
 
@@ -35,11 +35,9 @@
                       </tr>
                     </thead>
                     <tbody>
-
-                    @php($no=1)
                     @foreach ($user as $row)
                       <tr>
-                        <td>{{$no++}}</td>
+                        <td>{{$loop->iteration}}</td>
                         <td>{{$row->username}}</td>
                         <td>{{$row->name}}</td>
                         <td>

@@ -25,6 +25,9 @@ Route::middleware(['auth','preventBack'])->group(function () {
     Route::get('/dashboard', [PenggunaController::class, 'index'])->name('dashboard');
     Route::get('/peserta/{id}', [PenggunaController::class, 'tampilPeserta'])->name('tampil');
     Route::get('/penilaian/{id}', [PenggunaController::class, 'tampilPenilaian'])->name('penilaian');
+    Route::get('/inputNilai/{id}', [PenggunaController::class, 'inputNilai'])->name('inputNilai');
+    Route::get('/kategoriNomorLomba', [PenggunaController::class, 'kategoriNomorPerlombaan'])->name('kategoriNomorLomba');
+    Route::get('/kategoriNomorLomba/{id}', [PenggunaController::class, 'detailKategoriNomorPerlombaan'])->name('detailKategoriNomorLomba');
 
     Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
         Route::get('/users', 'semuaUsers')->name('dataUsers');

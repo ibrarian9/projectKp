@@ -16,11 +16,16 @@ class Tim extends Model
 
     public function peserta(): BelongsTo
     {
-        return $this->belongsTo(Peserta::class, 'id_peserta');
+       return $this->belongsTo(Peserta::class, 'id_peserta');
     }
 
-    public function lomba(): HasMany
+    public function tim(): BelongsTo
     {
-        return $this->hasMany(Lomba::class);
+       return $this->belongsTo(Tim::class, 'id_tim');
+    }
+
+    public function nomorLomba(): HasMany
+    {
+        return $this->hasMany(NomorPerlombaan::class);
     }
 }

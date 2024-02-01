@@ -10,7 +10,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>SB Admin 2 - Login</title>
+    <title>IPCOM V 2024 - Login</title>
 
     <!-- Custom fonts for this template-->
     <link
@@ -27,7 +27,7 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
   </head>
 
-  <body class="bg-gradient-primary">
+  <body class="align-items-center" style="background: linear-gradient(to bottom, rgba(191, 28, 199, 0.42), #BF1CC7)">
     <div class="container">
       <!-- Outer Row -->
       <div class="row justify-content-center">
@@ -37,8 +37,8 @@
               <div class="row">
                 <div class="col">
                   <div class="p-5">
-                    <div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                    <div class="text-center mb-4">
+                      <img src="{{asset('img/logo-ipcom.png')}}" style="width: 300px" alt="" />
                     </div>
                     @if ($errors ->any())
                                         <div class="alert alert-danger">
@@ -67,7 +67,7 @@
                                                   <small>{{$message}}</small>
                                                 @enderror
                                         </div>
-                      <button name="submit" type="submit" class="btn btn-green btn-user btn-block">
+                      <button name="submit" type="submit" class="btn btn-user btn-dark btn-block" style="background-color: #BF1CC7">
                         Login
                       </button>
                     </form>

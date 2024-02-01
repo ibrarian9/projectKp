@@ -1,9 +1,10 @@
 <ul
-        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        class="navbar-nav sidebar sidebar-dark accordion" style="background: linear-gradient(to bottom, rgba(191, 28, 199, 0.42), #BF1CC7);"
         id="accordionSidebar"
       >
         <a class="sidebar-brand d-flex align-items-center" href="{{route('dashboard')}}">
-          <div class="sidebar-brand-text mx-3">IPCOM</div>
+           <img src="<?= asset('img/logo-ipcom.png') ?>"  style="width: 150px; height:50px" >
+
         </a>
 
         <hr class="sidebar-divider my-0" />
@@ -29,9 +30,9 @@
             aria-labelledby="headingTwo"
             data-parent="#accordionSidebar"
           >
-            <div class="bg-white py-2 collapse-inner rounded">
+            <div class="bg-white py-2 collapse-inner rounded" style="overflow: hidden">
               <h6 class="collapse-header">Modus Daring-1</h6>
-                @foreach($namaLomba as $row)
+                @foreach($dataLomba as $row)
                     <a class="collapse-item" href="{{route('tampil', $row->id_lomba)}}">{{$row->nama_lomba}}</a>
                 @endforeach
             </div>
@@ -55,13 +56,19 @@
             aria-labelledby="headingUtilities"
             data-parent="#accordionSidebar"
           >
-            <div class="bg-white py-2 collapse-inner rounded">
+            <div class="bg-white py-2 collapse-inner rounded" style="overflow: hidden">
               <h6 class="collapse-header">Modus Daring-1</h6>
-              @foreach($namaLomba as $item)
-                    <a class="collapse-item" href="{{route('penilaian', $item->id_lomba)}}">{{$item->nama_lomba}}</a>
+              @foreach($dataNomorLomba as $item)
+                    <a class="collapse-item" href="{{route('penilaian', $item->id_nomor_perlombaan)}}">{{$item->nomor_lomba}}</a>
               @endforeach
             </div>
           </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('kategoriNomorLomba')}}">
+                <span>Kategori Nomor Perlombaan</span></a
+            >
         </li>
 
         <li class="nav-item">
