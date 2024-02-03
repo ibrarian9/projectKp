@@ -30,7 +30,6 @@
                   </h4>
               </div>
           </div>
-
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
@@ -40,35 +39,26 @@
               </div>
               <div class="row">
     <div class="col-12">
-     <!-- <div class="card shadow mb-4"> -->
          <div class="card-body">
              <div class="form-group">
                  <label for="name">Nama Peserta</label>
-                 <input type="text" class="form-control" id="name" name="name" value="{{$detailPeserta->nama_peserta}}">
+                 <input type="text" class="form-control" id="name" name="name" value="{{implode(', ',json_decode($namaPeserta->peserta_names))}}">
              </div>
+             @foreach($detailPeserta AS $item)
+                 <div class="form-group">
+                     <label for="name">{{$item->nama_kategori}}</label>
+                     <input type="number" class="form-control" id="name" name="nilai1" value="">
+                 </div>
+             @endforeach
             <div class="form-group">
-                <label for="name">Nilai 1</label>
-                <input type="text" class="form-control" id="name" name="name" value="">
+                <label for="penilaian">Penilaian Kualitatif Juri</label>
+                <textarea type="penilaian" rows="5" class="form-control" id="penilaian" name="penilaian" value=""></textarea>
             </div>
-            <div class="form-group">
-                <label for="password">Nilai 2</label>
-                <input type="password" class="form-control" id="password" name="password" value="">
-            </div>
-            <div class="form-group">
-                <label for="password">Nilai 3</label>
-                <input type="password" class="form-control" id="password" name="password" value="">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlTextarea1">Penilaian Kualitatif Juri</label>
-                <textarea type="password" class="form-control" id="password" name="password" value=""></textarea>
-            </div>
-
          </div>
          <div class="card-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a type="submit" class="btn btn-danger" href="{{url()->previous()}}">Batal</a>
          </div>
-     <!-- </div> -->
     </div>
    </div>
             </div>

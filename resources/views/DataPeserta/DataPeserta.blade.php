@@ -4,12 +4,7 @@
         @yield('contentPeserta')
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Data Peserta</h1>
-        <div
-            class="d-sm-flex align-items-center justify-content-between mb-4"
-        >
-            <!-- <h1 class="h3 mb-0 text-gray-800">Dashboard</h1> -->
-        </div>
-
+        <div class="d-sm-flex align-items-center justify-content-between mb-4"></div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -22,17 +17,17 @@
                         id="dataTable">
                         <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama Peserta</th>
-                            <th>Asal Universitas</th>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Nama Peserta</th>
+                            <th class="text-center">Asal Universitas</th>
                         </tr>
                         </thead>
                         @foreach ($dataPeserta as $row)
                             @if($row->id_peserta != null)
                                 <tbody>
                                 <tr>
-                                    <td>{{$loop->iteration}}</td>
-                                    <td>{{$row->nama_peserta}}</td>
+                                    <td class="text-center">{{$loop->iteration}}</td>
+                                    <td>{{implode(", ", json_decode($row->peserta_names))}}</td>
                                     <td>{{$row->nama_universitas}}</td>
                                 </tr>
                                 </tbody>

@@ -30,36 +30,31 @@
 
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table
-                                        class="table table-bordered"
-                                        id="dataTable"
-                                    >
+                                    <table class="table table-bordered" id="dataTable">
                                         <thead>
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama Peserta</th>
-                                                <th>Asal Universitas</th>
-                                                <th>Total</th>
-                                                <th>
-                                                    Komentar
-                                                </th>
-                                                <th>Aksi</th>
+                                                <th class="text-center">No</th>
+                                                <th class="text-center">Nama Peserta</th>
+                                                <th class="text-center">Asal Universitas</th>
+                                                <th class="text-center">Total</th>
+                                                <th class="text-center">Komentar</th>
+                                                <th class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
-                                        @if($dataPeserta->count() != 0)
+                                        @empty(!$dataPeserta)
                                             @foreach($dataPeserta AS $item)
                                                 <tbody>
                                                 <tr>
-                                                    <td>{{$loop->iteration}}</td>
-                                                    <td>{{$item->peserta->nama_peserta}}</td>
-                                                    <td>{{$item->peserta->universitas->nama_universitas}}</td>
-                                                    <td>0</td>
+                                                    <td class="text-center">{{$loop->iteration}}</td>
+                                                    <td>{{implode(', ',json_decode($item->peserta_names))}}</td>
+                                                    <td>{{$item->nama_universitas}}</td>
+                                                    <td class="text-center">0</td>
                                                     <td>
 
                                                     </td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         <a
-                                                            href="{{route('inputNilai', $item->id_peserta)}}"
+                                                            href="{{route('inputNilai', $item->id_tim)}}"
                                                             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                                                         ><i></i> Input Nilai</a
                                                         >
@@ -72,7 +67,7 @@
                                                 <tr>
                                                     <th colspan="10" class="text-center">Data Peserta Tidak Ada</th>
                                                 </tr>
-                                            @endif
+                                            @endempty
                                             </tfoot>
                                     </table>
                                 </div>

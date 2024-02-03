@@ -30,11 +30,11 @@ Route::middleware(['auth','preventBack'])->group(function () {
     Route::get('/kategoriNomorLomba/{id}', [PenggunaController::class, 'detailKategoriNomorPerlombaan'])->name('detailKategoriNomorLomba');
 
     Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
-        Route::get('/users', 'semuaUsers')->name('dataUsers');
+        Route::get('users', 'semuaUsers')->name('dataUsers');
         Route::get('tambah', 'tambah')->name('dataUsers.tambah');
         Route::post('tambah', 'simpan')->name('dataUsers.simpan');
         Route::get('edit/{id}', 'edit')->name('dataUsers.edit');
-        Route::post('edit/{id}', 'update')->name('Pengguna.tambah.update');
+        Route::post('edit/{id}', 'update')->name('dataUsers.update');
         Route::get('hapus/{id}', 'hapus')->name('dataUsers.hapus');
     });
 });

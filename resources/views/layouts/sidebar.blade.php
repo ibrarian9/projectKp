@@ -4,7 +4,6 @@
       >
         <a class="sidebar-brand d-flex align-items-center" href="{{route('dashboard')}}">
            <img src="<?= asset('img/logo-ipcom.png') ?>"  style="width: 150px; height:50px" >
-
         </a>
 
         <hr class="sidebar-divider my-0" />
@@ -31,7 +30,7 @@
             data-parent="#accordionSidebar"
           >
             <div class="bg-white py-2 collapse-inner rounded" style="overflow: hidden">
-              <h6 class="collapse-header">Modus Daring-1</h6>
+              <h6 class="collapse-header">Kategori Lomba</h6>
                 @foreach($dataLomba as $row)
                     <a class="collapse-item" href="{{route('tampil', $row->id_lomba)}}">{{$row->nama_lomba}}</a>
                 @endforeach
@@ -57,7 +56,7 @@
             data-parent="#accordionSidebar"
           >
             <div class="bg-white py-2 collapse-inner rounded" style="overflow: hidden">
-              <h6 class="collapse-header">Modus Daring-1</h6>
+              <h6 class="collapse-header">Nomor Perlombaan</h6>
               @foreach($dataNomorLomba as $item)
                     <a class="collapse-item" href="{{route('penilaian', $item->id_nomor_perlombaan)}}">{{$item->nomor_lomba}}</a>
               @endforeach

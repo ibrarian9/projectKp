@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Models\NomorPerlombaan;
-use App\Models\Peserta;
 use App\Models\Tim;
 use App\Models\User;
+use Dotenv\Validator;
 use Illuminate\Support\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -58,15 +58,19 @@ class PenggunaController extends Controller
 
     public function tampilPeserta($id): View
     {
-        $dataPeserta = Tim::select('lomba.id_lomba', 'lomba.nama_lomba', 'tim.id_peserta', 'peserta.*', 'universitas.*', DB::raw('JSON_ARRAYAGG(peserta.nama_peserta) as peserta_names'))
-            ->join(DB::raw("JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) as jt"))
-            ->join('peserta', 'jt.id_peserta', '=', 'peserta.id_peserta')
-            ->join('universitas', 'peserta.id_universitas', '=', 'universitas.id_universitas')
-            ->join('nomor_perlombaan', 'tim.id_nomor_perlombaan', '=', 'nomor_perlombaan.id_nomor_perlombaan')
-            ->rightJoin('lomba', 'nomor_perlombaan.id_lomba', '=', 'lomba.id_lomba')
-            ->where('lomba.id_lomba', $id)
-            ->get();
-        dd($dataPeserta);
+        $query = "
+            SELECT lomba.id_lomba, lomba.nama_lomba, tim.id_peserta, universitas.nama_universitas ,JSON_ARRAYAGG(peserta.nama_peserta) as peserta_names
+            FROM tim
+                INNER JOIN JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) AS jt
+                INNER JOIN peserta ON jt.id_peserta = peserta.id_peserta
+                INNER JOIN universitas ON peserta.id_universitas = universitas.id_universitas
+                INNER JOIN nomor_perlombaan ON tim.id_nomor_perlombaan = nomor_perlombaan.id_nomor_perlombaan
+                RIGHT JOIN lomba ON nomor_perlombaan.id_lomba = lomba.id_lomba
+            WHERE lomba.id_lomba = $id
+            GROUP BY lomba.id_lomba, lomba.nama_lomba, tim.id_peserta, universitas.nama_universitas;
+        ";
+
+        $dataPeserta = DB::select($query);
         $dataLomba = $this->namaLomba();
         $dataNomorLomba = $this->dataPeserta();
         return view('DataPeserta.DataPeserta', compact('dataPeserta', 'dataLomba', 'dataNomorLomba'));
@@ -75,7 +79,17 @@ class PenggunaController extends Controller
     public function tampilPenilaian($id): View
     {
         $dataLomba = $this->namaLomba();
-        $dataPeserta = Tim::with('peserta')->where('id_nomor_perlombaan', $id)->get();
+        $query =
+            " SELECT  tim.id_tim, universitas.nama_universitas ,JSON_ARRAYAGG(peserta.nama_peserta) AS peserta_names
+                FROM tim
+                INNER JOIN JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) AS jt
+                INNER JOIN peserta ON jt.id_peserta = peserta.id_peserta
+                INNER JOIN universitas ON peserta.id_universitas = universitas.id_universitas
+                INNER JOIN nomor_perlombaan ON tim.id_nomor_perlombaan = nomor_perlombaan.id_nomor_perlombaan
+              WHERE tim.id_nomor_perlombaan = $id
+              GROUP BY universitas.nama_universitas, tim.id_tim
+            ";
+        $dataPeserta = DB::select($query);
         $dataNomorLomba = $this->dataPeserta();
         return view('Penilaian.Penilaian', compact('dataLomba', 'dataPeserta', 'dataNomorLomba'));
     }
@@ -83,9 +97,20 @@ class PenggunaController extends Controller
     public function inputNilai($id): View
     {
         $dataLomba = $this->namaLomba();
-        $detailPeserta = Peserta::find($id);
+        $query =
+            " SELECT kp.nama_kategori, JSON_ARRAYAGG(peserta.nama_peserta) AS peserta_names
+                    FROM tim
+                    INNER JOIN JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) AS jt
+                    INNER JOIN peserta ON jt.id_peserta = peserta.id_peserta
+                    INNER JOIN nomor_perlombaan AS np ON tim.id_nomor_perlombaan = np.id_nomor_perlombaan
+                    INNER JOIN kategori_penilaian AS kp ON np.id_lomba = kp.id_lomba
+              WHERE tim.id_tim = $id
+              GROUP BY kp.nama_kategori
+            ";
+        $detailPeserta = DB::select($query);
+        $namaPeserta = $detailPeserta[0] ?? NULL;
         $dataNomorLomba = $this->dataPeserta();
-        return view('Penilaian.InputNilai', compact('dataLomba', 'detailPeserta', 'dataNomorLomba'));
+        return view('Penilaian.InputNilai', compact('dataLomba', 'namaPeserta', 'detailPeserta', 'dataNomorLomba'));
     }
 
     public function kategoriNomorPerlombaan(): View
@@ -98,7 +123,16 @@ class PenggunaController extends Controller
     public function detailKategoriNomorPerlombaan($id): View
     {
         $dataLomba = $this->namaLomba();
-        $listPeserta = Tim::with('peserta.universitas')->where('tim.id_nomor_perlombaan', $id)->get();
+        $query =
+            " SELECT universitas.nama_universitas ,JSON_ARRAYAGG(peserta.nama_peserta) AS peserta_names
+                FROM tim
+                INNER JOIN JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) AS jt
+                INNER JOIN peserta ON jt.id_peserta = peserta.id_peserta
+                INNER JOIN universitas ON peserta.id_universitas = universitas.id_universitas
+                INNER JOIN nomor_perlombaan ON tim.id_nomor_perlombaan = nomor_perlombaan.id_nomor_perlombaan
+              WHERE tim.id_nomor_perlombaan = $id
+              GROUP BY universitas.nama_universitas";
+        $listPeserta = DB::select($query);
         $dataNomorLomba = $this->dataPeserta();
         return view('Penilaian.DetailKategoriNomorLomba', compact('dataLomba', 'listPeserta', 'dataNomorLomba'));
     }
@@ -106,36 +140,40 @@ class PenggunaController extends Controller
     public function tambah(): View
     {
         $dataLomba = $this->namaLomba();
-        return view('Pengguna.TambahPengguna', compact('dataLomba'));
+        $dataNomorLomba = $this->dataPeserta();
+        return view('Pengguna.TambahPengguna', compact('dataLomba', 'dataNomorLomba'));
     }
 
     public function simpan(Request $request): RedirectResponse
     {
         $request->validate([
             'username' => 'required',
+            'name' => 'required',
             'password' => 'required',
         ]);
 
         $simpan = User::create([
             'username' => $request->username,
+            'name' => $request->name,
             'password' => bcrypt($request->password),
         ]);
 
-        return redirect()->route('indexPengguna');
+        return redirect()->route('dataUsers');
     }
 
-    public function edit(int $id): View
+    public function edit($id): View
     {
         $query = User::find($id);
-        return view('Pengguna.EditPengguna', compact('query'));
+        $dataLomba = $this->namaLomba();
+        $dataNomorLomba = $this->dataPeserta();
+        return view('Pengguna.EditPengguna', compact('query', 'dataNomorLomba', 'dataLomba'));
     }
 
-    public function hapus(string $id): RedirectResponse
+    public function hapus($id): RedirectResponse
     {
         $query = User::find($id);
         $query->delete();
-
-        return redirect()->route('indexPengguna');
+        return redirect()->route('dataUsers');
     }
 
 }
