@@ -58,7 +58,7 @@
             <div class="bg-white py-2 collapse-inner rounded" style="overflow: hidden">
               <h6 class="collapse-header">Nomor Perlombaan</h6>
               @foreach($dataNomorLomba as $item)
-                    <a class="collapse-item" href="{{route('penilaian', $item->id_nomor_perlombaan)}}">{{$item->nomor_lomba}}</a>
+                    <a class="collapse-item" href="{{route('penilaian', $item->id_nomor_perlombaan)}}">{{$item->id_nomor_perlombaan." ".$item->nomor_lomba}}</a>
               @endforeach
             </div>
           </div>

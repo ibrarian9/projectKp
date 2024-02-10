@@ -10,11 +10,8 @@ class KategoriPenilaian extends Model
     use HasFactory;
 
     protected $table = 'kategori_penilaian';
-    
     protected $fillable = 'nama_kategori';
-
     protected $primaryKey = 'id_kategori';
-
 
     public function kategoriPenilaianLomba()
     {
