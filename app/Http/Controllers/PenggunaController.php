@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Juri;
 use App\Models\NilaiLomba;
 use App\Models\NomorPerlombaan;
 use App\Models\PengaturanJuri;
@@ -18,7 +19,8 @@ class PenggunaController extends Controller
 {
     public function namaLomba(): Collection
     {
-        return Tim::join('nomor_perlombaan', 'tim.id_nomor_perlombaan', '=', 'nomor_perlombaan.id_nomor_perlombaan')
+        return Tim::query()
+            ->join('nomor_perlombaan', 'tim.id_nomor_perlombaan', '=', 'nomor_perlombaan.id_nomor_perlombaan')
             ->rightJoin('lomba', 'nomor_perlombaan.id_lomba', '=', 'lomba.id_lomba')
             ->select('lomba.id_lomba', 'lomba.nama_lomba', DB::raw('COUNT(tim.id_peserta) AS tim_count'))
             ->groupBy('lomba.id_lomba', 'lomba.nama_lomba')
@@ -27,7 +29,7 @@ class PenggunaController extends Controller
 
     public function dataPeserta(): Collection
     {
-        return NomorPerlombaan::withCount('tim')->get();
+        return NomorPerlombaan::query()->withCount('tim')->get();
     }
 
     public function index(): View
@@ -41,11 +43,11 @@ class PenggunaController extends Controller
     public function update($id, Request $request): RedirectResponse
     {
         $pengguna = [
-            'name' => $request->name,
-            'password' => bcrypt($request->password),
+            'name' => $request->get('name'),
+            'password' => bcrypt($request->get('password')),
         ];
 
-        User::find($id)->update($pengguna);
+        User::query()->find($id)->update($pengguna);
         return redirect()->route('indexPengguna');
     }
 
@@ -70,46 +72,85 @@ class PenggunaController extends Controller
             WHERE lomba.id_lomba = $id
             GROUP BY lomba.id_lomba, lomba.nama_lomba, tim.id_peserta, universitas.nama_universitas;
         ";
-
         $dataPeserta = DB::select($query);
+        $namaLomba = $dataPeserta[0];
         $dataLomba = $this->namaLomba();
         $dataNomorLomba = $this->dataPeserta();
-        return view('DataPeserta.DataPeserta', compact('dataPeserta', 'dataLomba', 'dataNomorLomba'));
+        return view('DataPeserta.DataPeserta', compact('dataPeserta', 'dataLomba', 'dataNomorLomba', 'namaLomba'));
     }
 
     public function tampilPenilaian($id): View
     {
         $dataLomba = $this->namaLomba();
+        $dataNomorLomba = $this->dataPeserta();
 
         // Menampilkan Data Juri
-        $queryJuri =
-            "SELECT juri.*, nomor_perlombaan.nomor_lomba
-                FROM pengaturan_juri
-                INNER JOIN nomor_perlombaan ON pengaturan_juri.id_nomor_perlombaan = nomor_perlombaan.id_nomor_perlombaan
-                INNER JOIN juri ON pengaturan_juri.id_juri = juri.id_juri
-             WHERE pengaturan_juri.id_nomor_perlombaan = $id
-            ";
-        $juri = DB::select($queryJuri);
+        $juri = PengaturanJuri::query()
+            ->join('nomor_perlombaan AS np', 'pengaturan_juri.id_nomor_perlombaan', '=', 'np.id_nomor_perlombaan')
+            ->join('juri', 'pengaturan_juri.id_juri', '=', 'juri.id_juri')
+            ->where('pengaturan_juri.id_nomor_perlombaan', $id)
+            ->select('juri.*', 'np.nomor_lomba')
+            ->get()->toArray();
+
         $namaJuri = array_filter(array_map(function ($item) {
-            return $item->nama_juri ?? null;
+            return $item['nama_juri'] ?? null;
         }, $juri));
-        $namaJuriAll = implode(", ", $namaJuri);
+        $namaSemuaJuri = implode(", ", $namaJuri);
+
 
         // Menampilkan Data Peserta
         $query =
-            " SELECT tim.id_nomor_perlombaan as id, tim.id_tim, universitas.nama_universitas ,JSON_ARRAYAGG(peserta.nama_peserta) AS peserta_names
+            " SELECT tim.id_nomor_perlombaan as id, nomor_perlombaan.nomor_lomba ,tim.id_tim, universitas.nama_universitas, JSON_ARRAYAGG(peserta.nama_peserta) AS list_peserta
                 FROM tim
                 INNER JOIN JSON_TABLE(tim.id_peserta, '$[*]' COLUMNS (id_peserta INT PATH '$')) AS jt
                 INNER JOIN peserta ON jt.id_peserta = peserta.id_peserta
                 INNER JOIN universitas ON peserta.id_universitas = universitas.id_universitas
                 INNER JOIN nomor_perlombaan ON tim.id_nomor_perlombaan = nomor_perlombaan.id_nomor_perlombaan
               WHERE tim.id_nomor_perlombaan = $id
-              GROUP BY universitas.nama_universitas, tim.id_tim, tim.id_nomor_perlombaan
+              GROUP BY universitas.nama_universitas, tim.id_tim, tim.id_nomor_perlombaan,  nomor_perlombaan.nomor_lomba
             ";
         $dataPeserta = DB::select($query);
-        $dataNomorLomba = $this->dataPeserta();
+        $namaLomba = $dataNomorLomba->where('id_nomor_perlombaan', $id)->first();
 
-        return view('Penilaian.Penilaian', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'namaJuriAll', 'juri'));
+        //  Membuat loop sum sesuai jumlah data juri
+        $tambah = [];
+        foreach ($juri as $num => $j){
+            $tambah[] = "SUM(CASE WHEN juri.id_juri = {$j['id_juri']} THEN nl.poin_nilai_lomba ELSE 0 END) AS total_juri$num";
+        }
+        $sumQuery = implode(", ", $tambah);
+        $sum = !empty($sumQuery) ? ",$sumQuery" : '';
+
+        //  Menampilkan Data peserta dan Total Nilai
+        $queryNilai =
+            " SELECT tim.id_tim, np.id_nomor_perlombaan $sum
+                FROM tim
+                INNER JOIN nomor_perlombaan AS np ON tim.id_nomor_perlombaan = np.id_nomor_perlombaan
+                INNER JOIN nilai_lomba AS nl ON tim.id_tim = nl.id_tim
+                INNER JOIN kategori_penilaian AS kp ON nl.id_kategori_penilaian = kp.id_kategori
+                INNER JOIN pengaturan_juri AS pj ON nl.id_pengaturan_juri = pj.id_pengaturan_juri
+                INNER JOIN juri ON pj.id_juri = juri.id_juri
+              WHERE tim.id_nomor_perlombaan = $id
+              GROUP BY tim.id_tim, np.id_nomor_perlombaan;
+            ";
+        $nilai = DB::select($queryNilai);
+
+        // Convert data to object
+        $data1 = collect($nilai);
+        $data2 = collect($dataPeserta);
+
+        // Merge Data using Map
+        $combineCollect = $data1->map(function ($i) use ($data2){
+           $dataCombine = $data2->firstWhere('id_tim', $i->id_tim);
+           if ($dataCombine) {
+               foreach ($dataCombine as $key => $value){
+                   $i->$key = $value;
+               }
+           }
+           return $i;
+        });
+        $dataNilaidanPeserta = $combineCollect->toArray();
+
+        return view('Penilaian.Penilaian', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'namaSemuaJuri', 'juri', 'dataNilaidanPeserta', 'namaLomba'));
     }
 
     public function inputNilai($id, $timId, $juriId): View
@@ -118,8 +159,7 @@ class PenggunaController extends Controller
         $dataNomorLomba = $this->dataPeserta();
 
         // Menampilkan Data Juri
-        $queryJuri = "SELECT nama_juri, id_juri FROM juri WHERE id_juri = $juriId";
-        $juri = DB::select($queryJuri);
+        $juri = Juri::query()->where('id_juri', $juriId)->get();
         $namaJuri = $juri[0] ?? NULL;
 
         // Menampilkan Data Nilai dan Peserta jika Data Nilai Ada pada tabel nilai lomba
@@ -189,12 +229,13 @@ class PenggunaController extends Controller
         $min = min($idPenilaian);
         $max = max($idPenilaian);
 
+        // Memasukkan data nilai kedalam database nilai lomba
         try {
-            foreach ($req->all() as $key => $value) {
-                if (is_numeric($key) && in_array($key, range($min->id_kategori, $max->id_kategori))) {
+            foreach ($req->all() AS $numbers => $value) {
+                if (is_numeric($numbers) && in_array($numbers, range($min->id_kategori, $max->id_kategori))) {
                     NilaiLomba::updateOrCreate(
                         [
-                            'id_kategori_penilaian' => $key,
+                            'id_kategori_penilaian' => $numbers,
                             'id_tim' => $timId,
                             'id_pengaturan_juri' => $pengaturanId,
                         ],
@@ -203,7 +244,7 @@ class PenggunaController extends Controller
                 }
             }
             return redirect()->route('penilaian', $npId);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return redirect()->back();
         }
     }
@@ -250,9 +291,9 @@ class PenggunaController extends Controller
         ]);
 
         $simpan = User::create([
-            'username' => $request->username,
-            'name' => $request->name,
-            'password' => bcrypt($request->password),
+            'username' => $request->get('username'),
+            'name' => $request->get('name'),
+            'password' => bcrypt($request->get('password')),
         ]);
 
         return redirect()->route('dataUsers');
@@ -260,7 +301,7 @@ class PenggunaController extends Controller
 
     public function edit($id): View
     {
-        $query = User::find($id);
+        $query = User::query()->find($id);
         $dataLomba = $this->namaLomba();
         $dataNomorLomba = $this->dataPeserta();
         return view('Pengguna.EditPengguna', compact('query', 'dataNomorLomba', 'dataLomba'));
@@ -268,7 +309,7 @@ class PenggunaController extends Controller
 
     public function hapus($id): RedirectResponse
     {
-        $query = User::find($id);
+        $query = User::query()->find($id);
         $query->delete();
         return redirect()->route('dataUsers');
     }

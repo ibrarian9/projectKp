@@ -3,7 +3,7 @@
     <div class="container-fluid">
         @yield('contentPeserta')
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Data Peserta</h1>
+        <h1 class="h3 text-gray-800">Data Peserta {{$namaLomba->nama_lomba}}</h1>
         <div class="d-sm-flex align-items-center justify-content-between mb-4"></div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">

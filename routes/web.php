@@ -29,15 +29,12 @@ Route::middleware(['auth','preventBack'])->group(function () {
     Route::post('/penilaian', [PenggunaController::class, 'postNilai'])->name('postNilai');
     Route::get('/kategoriNomorLomba', [PenggunaController::class, 'kategoriNomorPerlombaan'])->name('kategoriNomorLomba');
     Route::get('/kategoriNomorLomba/{id}', [PenggunaController::class, 'detailKategoriNomorPerlombaan'])->name('detailKategoriNomorLomba');
-
-    Route::controller(PenggunaController::class)->prefix('pengguna')->group(function () {
-        Route::get('users', 'semuaUsers')->name('dataUsers');
-        Route::get('tambah', 'tambah')->name('dataUsers.tambah');
-        Route::post('tambah', 'simpan')->name('dataUsers.simpan');
-        Route::get('edit/{id}', 'edit')->name('dataUsers.edit');
-        Route::post('edit/{id}', 'update')->name('dataUsers.update');
-        Route::get('hapus/{id}', 'hapus')->name('dataUsers.hapus');
-    });
+    Route::get('/pengguna/users', [PenggunaController::class, 'semuaUsers'])->name('dataUsers');
+    Route::get('/pengguna/tambah', [PenggunaController::class,'tambah'])->name('dataUsers.tambah');
+    Route::post('/pengguna/tambah', [PenggunaController::class,'simpan'])->name('dataUsers.simpan');
+    Route::get('/pengguna/edit/{id}', [PenggunaController::class,'edit'])->name('dataUsers.edit');
+    Route::post('/pengguna/edit/{id}', [PenggunaController::class,'update'])->name('dataUsers.update');
+    Route::get('/pengguna/hapus/{id}', [PenggunaController::class,'hapus'])->name('dataUsers.hapus');
 });
 
 
