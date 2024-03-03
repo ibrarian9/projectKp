@@ -52,7 +52,7 @@
                                 <form action="{{ route('login-proses') }}" method="POST">
                                     @csrf
                                     <div class="form-group">
-                                        <label for="" class="text-green">Username</label>
+                                        <label for="username" class="text-green">Username</label>
                                         <input name="username" type="text" class="form-control form-control-user"
                                                id="username" placeholder="Enter Username ..."
                                                value="{{old('username')}}">
@@ -61,7 +61,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label class="text-green">Password</label>
+                                        <label for="password" class="text-green">Password</label>
                                         <input type="password" class="form-control form-control-user"
                                                id="password" placeholder="password" name="password">
                                         @error('password')

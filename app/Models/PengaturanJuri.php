@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PengaturanJuri extends Model
 {
     use HasFactory;
 
     protected $table = 'pengaturan_juri';
+    protected $fillable = ['tanggal_pemeriksaan'];
     protected $primaryKey = 'id_pengaturan_juri';
 
-    public function juri(): HasMany
+    public $timestamps = false;
+    public function users(): BelongsTo
     {
-        return $this->hasMany(Juri::class, 'id_juri');
+        return $this->belongsTo(User::class, 'id_user');
     }
 
     public function nomorLomba(): BelongsTo

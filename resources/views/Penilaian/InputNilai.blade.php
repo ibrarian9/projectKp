@@ -17,19 +17,19 @@
                     </h6>
                 </div>
                 {{--input data id--}}
-                <input type="hidden" id="juriId" name="juriId" value="{{$namaJuri->id_juri}}">
+                <input type="hidden" id="juriId" name="juriId" value="{{$juri->id}}">
                 <input type="hidden" id="timId" name="timId" value="{{$dataPesertaTunggal->id_tim}}">
                 <input type="hidden" id="npId" name="npId" value="{{$dataPesertaTunggal->id_nomor_perlombaan}}">
 
                 <div class="card-body">
                     <h4 class="h5 mb-2 text-gray-800">
-                        Nama Juri : {{$namaJuri->nama_juri}}
+                        Nama Juri : {{$juri->name}}
                     </h4>
                     <h4 class="h5 mb-2 text-gray-800">
                         Asal Universitas : {{$dataPesertaTunggal->nama_universitas}}
                     </h4>
                     <h4 class="h5 mb-2 text-gray-800">
-                        Tanggal Pemeriksaan :
+                        Tanggal Pemeriksaan : {{$tanggalPemeriksaan}}
                     </h4>
                 </div>
             </div>
@@ -56,13 +56,9 @@
                             @foreach($dataPesertaAll AS $item)
                                 <div class="form-group">
                                     <label for="{{$item->id_kategori}}">{{$item->nama_kategori}}</label>
-                                    <input type="number" class="form-control" id="{{$item->id_kategori}}" name="{{$item->id_kategori}}" value="{{$item->poin_nilai_lomba ?? ""}}">
+                                    <input type="number" class="form-control" id="{{$item->id_kategori}}" name="{{$item->id_kategori}}" value="{{$item->poin_nilai_lomba ?? ""}}" required>
                                 </div>
                             @endforeach
-{{--                            <div class="form-group">--}}
-{{--                                <label for="penilaian">Penilaian Kualitatif Juri</label>--}}
-{{--                                <textarea type="text" rows="5" class="form-control" id="penilaian" name="penilaian"></textarea>--}}
-{{--                            </div>--}}
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Simpan</button>

@@ -3,28 +3,40 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    FORM PENILAIAN DEWAN JURI LOMBA {{ str($namaLomba->nomor_lomba)->upper() }}
+                <h6 class="m-0 font-weight-bold" style="color: #BF1CC7">
+                    Form Penilaian Dewan Juri Lomba {{ str($namaLomba->nomor_lomba)}}
                 </h6>
             </div>
 
             <div class="card-body">
                 <h1 class="h3 mb-2 text-gray-800"></h1>
                 <h4 class="h5 mb-2 text-gray-800">
-                    Nama Juri : {{ $namaSemuaJuri }}
+                    @if(Auth::user()->id_role === 1)
+                        Nama Juri : {{ $namaSemuaJuri }}
+                    @elseif(Auth::user()->id_role === 2)
+                        Nama Juri : {{ $juriByIdLogin->users->name }}
+                    @endif
                 </h4>
                 <h4 class="h5 mb-2 text-gray-800">
-                    Asal Universitas :
+                    @if(Auth::user()->id_role === 1)
+                        Asal Universitas : {{ $namaSemuaUniv }}
+                    @elseif(Auth::user()->id_role === 2)
+                        Asal Universitas : {{ $juriByIdLogin->users->univ->nama_universitas }}
+                    @endif
                 </h4>
                 <h4 class="h5 mb-2 text-gray-800">
-                    Tanggal Pemeriksaan :
+                    @if(Auth::user()->id_role === 1)
+                        Tanggal Pemeriksaan : {{ $tanggalPemeriksaanSemua }}
+                    @elseif(Auth::user()->id_role === 2)
+                        Tanggal Pemeriksaan : {{ $juriByIdLogin->tanggal_pemeriksaan ?? "Belum Ada Tanggal" }}
+                    @endif
                 </h4>
             </div>
         </div>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    FORM PENILAIAN PESERTA LOMBA {{ str($namaLomba->nomor_lomba)->upper() }}
+                <h6 class="m-0 font-weight-bold" style="color: #BF1CC7">
+                    Form Penilaian Peserta Lomba {{ str($namaLomba->nomor_lomba)}}
                 </h6>
             </div>
 
@@ -36,38 +48,61 @@
                             <th class="text-center">No</th>
                             <th class="text-center">Nama Peserta</th>
                             <th class="text-center">Asal Universitas</th>
-                            @foreach($juri as $j)
-                                <th class="text-center">Total Juri {{$j['id_juri']}}</th>
-                            @endforeach
-                            <th class="text-center">Komentar</th>
-                            @foreach($juri as $j)
-                                <th class="text-center">Juri {{$loop->iteration}}</th>
-                            @endforeach
+                            @if(Auth::user()->id_role === 1)
+                                @foreach($juri as $j)
+                                    <th class="text-center">Total Juri <br> {{$j['name']}}</th>
+                                @endforeach
+                                @foreach($juri as $j)
+                                    <th class="text-center">Aksi Juri <br> {{$j['name']}}</th>
+                                @endforeach
+                            @elseif(Auth::user()->id_role === 2)
+                                <th class="text-center">Total Nilai</th>
+                                <th class="text-center">{{Auth::user()->name}}</th>
+                            @endif
                         </tr>
                         </thead>
                         @empty(!$dataPeserta)
-                            @foreach($dataNilaidanPeserta AS $item)
-                                <tbody>
-                                <tr>
-                                    <td class="text-center">{{$loop->iteration}}</td>
-                                    <td>{{implode(', ',json_decode($item->list_peserta))}}</td>
-                                    <td>{{$item->nama_universitas}}</td>
-                                    @foreach($juri as $j)
-                                        <td class="text-center">{{ $item->{'total_juri'.$loop->index} }}</td>
-                                    @endforeach
-                                    <td></td>
-                                    @foreach($juri as $j)
+                            @if(Auth::user()->id_role === 1)
+                                @foreach($dataNilaidanPeserta AS $item)
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">{{$loop->iteration}}</td>
+                                        <td>{{implode(', ',json_decode($item->list_peserta))}}</td>
+                                        <td>{{$item->nama_universitas}}</td>
+                                        @foreach($juri as $j)
+                                            <td class="text-center">{{ $item->{'total_juri'.$loop->index} }}</td>
+                                        @endforeach
+                                        @foreach($juri as $j)
+                                            <td class="text-center">
+                                                <a
+                                                    href="{{route('inputNilai', ['id' => $item->id, 'timId' => $item->id_tim, 'juriId' =>  $j['id']])}}"
+                                                    class="d-sm-inline-block btn btn-sm shadow-sm" style="background-color: #BF1CC7; color: #FFFFFF">Input
+                                                    Nilai
+                                                </a>
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                    </tbody>
+                                @endforeach
+                            @elseif(Auth::user()->id_role === 2)
+                                @foreach($dataNilaidanPesertaPerJuri AS $item)
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">{{$loop->iteration}}</td>
+                                        <td>{{implode(', ',json_decode($item->list_peserta))}}</td>
+                                        <td>{{$item->nama_universitas}}</td>
+                                        <td class="text-center">{{ $item->total_nilai }}</td>
                                         <td class="text-center">
                                             <a
-                                                href="{{route('inputNilai', ['id' => $item->id, 'timId' => $item->id_tim, 'juriId' =>  $j['id_juri']])}}"
-                                                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Input
-                                                Nilai</a
-                                            >
+                                                href="{{route('inputNilai', ['id' => $item->id, 'timId' => $item->id_tim, 'juriId' =>  $juriByIdLogin->id_user])}}"
+                                                class="d-sm-inline-block btn btn-sm shadow-sm" style="background-color: #BF1CC7; color: #FFFFFF">Input
+                                                Nilai
+                                            </a>
                                         </td>
-                                    @endforeach
-                                </tr>
-                                </tbody>
-                            @endforeach
+                                    </tr>
+                                    </tbody>
+                                @endforeach
+                            @endif
                             <tfoot>
                             @else
                                 <tr>

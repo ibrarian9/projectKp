@@ -18,7 +18,6 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <!-- <div class="card shadow mb-4"> -->
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="username">Username</label>
@@ -31,14 +30,30 @@
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password"
-                                       value="{{$query->password}}">
+                                <input type="password" class="form-control" id="password" name="password" value="{{old('password')}}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_role">Role</label>
+                                <select name="id_role" id="id_role" class="form-control" required>
+                                    <option value="">Select Role</option>
+                                    @foreach($dataRole as $role)
+                                        <option value="{{ $role->id_role }}" @if($query->id_role == $role->id_role) selected @endif>{{ $role->nama_role }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_universitas">Universitas</label>
+                                <select name="id_universitas" id="id_universitas" class="form-control" required>
+                                    <option value="">Select Universitas</option>
+                                    @foreach($dataUniv as $univ)
+                                        <option value="{{ $univ->id_universitas }}" @if($query->id_universitas == $univ->id_universitas) selected @endif>{{ $univ->nama_universitas}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                                 <a type="submit" href="{{ route('dataUsers') }}" class="btn btn-danger">Batal</a>
                             </div>
-                            <!-- </div> -->
                         </div>
                     </div>
                 </div>

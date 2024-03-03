@@ -23,4 +23,9 @@ class NomorPerlombaan extends Model
     {
         return $this->hasMany(Tim::class, 'id_nomor_perlombaan');
     }
+
+    public function pengaturanJuri(): BelongsTo
+    {
+        return $this->belongsTo(PengaturanJuri::class, 'id_nomor_perlombaan');
+    }
 }

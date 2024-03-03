@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -14,27 +15,28 @@ class LoginController extends Controller
         return view('Login');
     }
 
-    public function loginDashboard(Request $request)
+    public function loginDashboard(Request $request): RedirectResponse
     {
-        $request->validate([
+        $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required',
         ], [
-            'name.required' => 'Username Wajib Diisi',
-            'password.required' => 'Password Wajib Diisi',
+            'username.required' => 'Username is required',
+            'password.required' => 'Password is required',
         ]);
 
-        $infologin = [
-            'username' => $request->username,
-            'password' => $request->password
-        ];
-
-        if (Auth::attempt($infologin)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect("dashboard");
-        } else {
-            return redirect('/')->withErrors('Data yang dimasukkan tidak sesuai')->withInput();
+            Log::info('akun = '.Auth::user());
+            try {
+                return redirect()->route('dashboard');
+            } catch (\Exception $e){
+                Log::error('Error = '.$e->getMessage());
+                return back();
+            }
         }
+        return back()->withErrors('Data yang dimasukkan tidak sesuai')->withInput();
+
     }
 
     public function logout(Request $req): RedirectResponse

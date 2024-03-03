@@ -15,12 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('guest')->group(function () {
-    Route::get('/', [LoginController::class, 'login'])->name('login');
-    Route::post('/login-proses', [LoginController::class, 'loginDashboard'])->name('login-proses');
-});
 
-Route::middleware(['auth','preventBack'])->group(function () {
+Route::get('/', [LoginController::class, 'login'])->name('login')->middleware('guest');
+Route::post('/login-proses', [LoginController::class, 'loginDashboard'])->name('login-proses');
+
+Route::middleware(['auth','preventBack',])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [PenggunaController::class, 'index'])->name('dashboard');
     Route::get('/peserta/{id}', [PenggunaController::class, 'tampilPeserta'])->name('tampil');

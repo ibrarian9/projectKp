@@ -21,6 +21,8 @@
                         <th class="text-center">No</th>
                         <th class="text-center">Username</th>
                         <th class="text-center">Nama</th>
+                        <th class="text-center">Universitas</th>
+                        <th class="text-center">Role</th>
                         <th class="text-center">Aksi</th>
                       </tr>
                     </thead>
@@ -30,6 +32,8 @@
                         <td class="text-center">{{$loop->iteration}}</td>
                         <td>{{$row->username}}</td>
                         <td>{{$row->name}}</td>
+                        <td>{{$row->univ->nama_universitas ?? ''}}</td>
+                        <td class="text-center">{{$row->roles->nama_role ?? ''}}</td>
                         <td class="text-center">
                           <a
                             href="{{route('dataUsers.edit',$row->id)}}"

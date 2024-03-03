@@ -39,6 +39,30 @@
                                 <small class="text-danger">{{$message}}</small>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="id_role">Role</label>
+                                <select name="id_role" id="id_role" class="form-control" required>
+                                    <option value="">Select Role</option>
+                                    @foreach($dataRole as $role)
+                                        <option value="{{ $role->id_role }}">{{ $role->nama_role }}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_role')
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="id_universitas">Universitas</label>
+                                <select name="id_universitas" id="id_universitas" class="form-control" required>
+                                    <option value="">Select Universitas</option>
+                                    @foreach($dataUniv as $univ)
+                                        <option value="{{ $univ->id_universitas }}">{{ $univ->nama_universitas }}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_universitas')
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
+                            </div>
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Simpan</button>
