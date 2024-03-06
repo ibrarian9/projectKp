@@ -31,9 +31,16 @@
         >
             <div class="bg-white py-2 collapse-inner rounded" style="overflow:hidden">
                 <h6 class="collapse-header">Kategori Lomba</h6>
-                @foreach($dataLomba as $row)
-                    <a class="collapse-item" href="{{route('tampil', $row->id_lomba)}}">{{$row->nama_lomba}}</a>
-                @endforeach
+                @if(Auth::user()->id_role == 1)
+                    @foreach($dataLomba as $i)
+                        <a class="collapse-item" href="{{route('tampil', $i->id_lomba)}}">{{$i->nama_lomba}}</a>
+                    @endforeach
+                @elseif(Auth::user()->id_role == 2)
+                    @foreach($dataLombaByJuri as $i)
+                        <a class="collapse-item" href="{{route('tampil', $i->id_lomba)}}">{{$i->nama_lomba}}</a>
+                    @endforeach
+                @endif
+
             </div>
         </div>
     </li>
@@ -71,14 +78,14 @@
             </div>
         </div>
     </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="{{route('kategoriNomorLomba')}}">
-            <span>Kategori Nomor Perlombaan</span></a
-        >
-    </li>
+    
     {{--Role Admin--}}
     @if(Auth::user()->id_role == 1)
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('kategoriNomorLomba')}}">
+                <span>Kategori Nomor Perlombaan</span></a
+            >
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="{{route('dataUsers')}}">
                 <span>Manajemen Pengguna</span></a

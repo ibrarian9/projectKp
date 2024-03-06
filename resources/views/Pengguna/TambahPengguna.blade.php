@@ -15,61 +15,64 @@
                         Tambah Data Pengguna
                     </h6>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" value="">
-                                @error('username')
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
+                @if(Auth::user()->id_role == 1)
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" value="">
+                                    @error('username')
+                                    <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Nama</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="">
+                                    @error('name')
+                                    <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" value="">
+                                    @error('password')
+                                    <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_role">Role</label>
+                                    <select name="id_role" id="id_role" class="form-control" required>
+                                        <option value="">Select Role</option>
+                                        @foreach($dataRole as $role)
+                                            <option value="{{ $role->id_role }}">{{ $role->nama_role }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('id_role')
+                                    <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_universitas">Universitas</label>
+                                    <select name="id_universitas" id="id_universitas" class="form-control" required>
+                                        <option value="">Select Universitas</option>
+                                        @foreach($dataUniv as $univ)
+                                            <option value="{{ $univ->id_universitas }}">{{ $univ->nama_universitas }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('id_universitas')
+                                    <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="name">Nama</label>
-                                <input type="text" class="form-control" id="name" name="name" value="">
-                                @error('name')
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <a type="submit" href="{{ route('dataUsers') }}" class="btn btn-danger">Batal</a>
                             </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" value="">
-                                @error('password')
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="id_role">Role</label>
-                                <select name="id_role" id="id_role" class="form-control" required>
-                                    <option value="">Select Role</option>
-                                    @foreach($dataRole as $role)
-                                        <option value="{{ $role->id_role }}">{{ $role->nama_role }}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_role')
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="id_universitas">Universitas</label>
-                                <select name="id_universitas" id="id_universitas" class="form-control" required>
-                                    <option value="">Select Universitas</option>
-                                    @foreach($dataUniv as $univ)
-                                        <option value="{{ $univ->id_universitas }}">{{ $univ->nama_universitas }}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_universitas')
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                            <a type="submit" href="{{ route('dataUsers') }}" class="btn btn-danger">Batal</a>
                         </div>
                     </div>
-                </div>
+                @elseif(Auth::user()->id_role == 2)
+                @endif
             </div>
         </div>
     </form>

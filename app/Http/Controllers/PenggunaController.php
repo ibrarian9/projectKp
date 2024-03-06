@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
+
 class PenggunaController extends Controller
 {
     public function namaLomba(): Collection
@@ -26,6 +27,20 @@ class PenggunaController extends Controller
             ->join('nomor_perlombaan', 'tim.id_nomor_perlombaan', '=', 'nomor_perlombaan.id_nomor_perlombaan')
             ->rightJoin('lomba', 'nomor_perlombaan.id_lomba', '=', 'lomba.id_lomba')
             ->select('lomba.id_lomba', 'lomba.nama_lomba', DB::raw('COUNT(tim.id_peserta) AS tim_count'))
+            ->groupBy('lomba.id_lomba', 'lomba.nama_lomba')
+            ->get();
+    }
+
+    public function namaLombaByJuri(): Collection
+    {
+        $id = Auth::user()->id;
+        return Tim::query()
+            ->join('nomor_perlombaan as np', 'tim.id_nomor_perlombaan', '=', 'np.id_nomor_perlombaan')
+            ->rightJoin('lomba', 'np.id_lomba', '=', 'lomba.id_lomba')
+            ->join('pengaturan_juri as pj', 'np.id_nomor_perlombaan', '=', 'pj.id_nomor_perlombaan')
+            ->join('users', 'pj.id_user', '=', 'users.id')
+            ->select('lomba.id_lomba', 'lomba.nama_lomba', DB::raw('COUNT(tim.id_peserta) AS tim_count'))
+            ->where('users.id', $id)
             ->groupBy('lomba.id_lomba', 'lomba.nama_lomba')
             ->get();
     }
@@ -61,10 +76,11 @@ class PenggunaController extends Controller
     public function index(): View
     {
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataPeserta = $this->dataPeserta();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
-        return view('Dashboard', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'dataNomorLombaByJuri'));
+        return view('Dashboard', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'dataNomorLombaByJuri','dataLombaByJuri'));
     }
 
     public function tampilPeserta($id): View
@@ -83,16 +99,24 @@ class PenggunaController extends Controller
         $dataPeserta = DB::select($query);
         $namaLomba = $dataPeserta[0];
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
-        return view('DataPeserta.DataPeserta', compact('dataPeserta', 'dataLomba', 'dataNomorLomba', 'namaLomba','dataNomorLombaByJuri'));
+        return view('DataPeserta.DataPeserta', compact('dataPeserta', 'dataLomba', 'dataNomorLomba', 'namaLomba','dataNomorLombaByJuri','dataLombaByJuri'));
+    }
+
+    public function postUniv(Request $req){
+        $test = $req->get('id_univ');
+        dd($test);
     }
 
     public function tampilPenilaian($id): View
     {
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
+        $dataUniv = $this->dataUniv();
 
         // Menampilkan Data Peserta
         $query =
@@ -148,7 +172,6 @@ class PenggunaController extends Controller
 
         // ADMIN
         // Menampilkan Data Juri Admin
-
         // Menampilkan Data Peserta
         $query =
             " SELECT tim.id_nomor_perlombaan as id, nomor_perlombaan.nomor_lomba ,tim.id_tim, universitas.nama_universitas, JSON_ARRAYAGG(peserta.nama_peserta) AS list_peserta
@@ -224,23 +247,24 @@ class PenggunaController extends Controller
                     }
                 }
             } else {
-                $item->total_juri0 = "0";
-                $item->total_juri1 = "0";
-                $item->total_juri2 = "0";
+                for ($i = 0; $i <= 20; $i++){
+                    $loop = "total_juri".$i;
+                    $item->$loop = "0";
+                }
             }
-
             return $item;
         });
         $dataNilaidanPeserta = $combineCollect->toArray();
 
         return view('Penilaian.Penilaian', compact('dataLomba', 'dataPeserta', 'dataNomorLomba',
-            'namaSemuaJuri', 'juri', 'dataNilaidanPeserta', 'namaLomba', 'tanggalPemeriksaanSemua',
-            'juriByIdLogin', 'nilaiPerJuri', 'dataNilaidanPesertaPerJuri', 'namaSemuaUniv', 'dataNomorLombaByJuri'));
+            'namaSemuaJuri', 'juri', 'dataNilaidanPeserta', 'namaLomba', 'tanggalPemeriksaanSemua', 'dataUniv' ,
+            'juriByIdLogin', 'nilaiPerJuri', 'dataNilaidanPesertaPerJuri', 'namaSemuaUniv', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function inputNilai($id, $timId, $juriId): View
     {
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
 
@@ -285,7 +309,7 @@ class PenggunaController extends Controller
         $dataPesertaTunggal = $dataPesertaAll[0] ?? null;
 
         return view('Penilaian.InputNilai', compact('dataLomba', 'dataNomorLomba',
-            'dataPesertaAll', 'dataPesertaTunggal', 'tanggalPemeriksaan', 'juri', 'dataNomorLombaByJuri'));
+            'dataPesertaAll', 'dataPesertaTunggal', 'tanggalPemeriksaan', 'juri', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function postNilai(Request $req): View|RedirectResponse
@@ -343,15 +367,17 @@ class PenggunaController extends Controller
     public function kategoriNomorPerlombaan(): View
     {
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataPeserta = $this->dataPeserta();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
-        return view('Penilaian.KategoriNomorLomba', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'dataNomorLombaByJuri'));
+        return view('Penilaian.KategoriNomorLomba', compact('dataLomba', 'dataPeserta', 'dataNomorLomba', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function detailKategoriNomorPerlombaan($id): View
     {
         $dataLomba = $this->namaLomba();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
         $query =
             " SELECT nomor_perlombaan.nomor_lomba ,universitas.nama_universitas ,JSON_ARRAYAGG(peserta.nama_peserta) AS peserta_names
@@ -365,7 +391,7 @@ class PenggunaController extends Controller
         $listPeserta = DB::select($query);
         $nomorLomba = $listPeserta[0];
         $dataNomorLomba = $this->dataPeserta();
-        return view('Penilaian.DetailKategoriNomorLomba', compact('dataLomba', 'listPeserta', 'dataNomorLomba', 'nomorLomba', 'dataNomorLombaByJuri'));
+        return view('Penilaian.DetailKategoriNomorLomba', compact('dataLomba', 'listPeserta', 'dataNomorLomba', 'nomorLomba', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function semuaUsers(): View
@@ -373,8 +399,9 @@ class PenggunaController extends Controller
         $dataLomba = $this->namaLomba();
         $user = User::with(['univ','roles'])->get();
         $dataNomorLomba = $this->dataPeserta();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
-        return view('Pengguna.DataPengguna', compact('user', 'dataLomba', 'dataNomorLomba','dataNomorLombaByJuri'));
+        return view('Pengguna.DataPengguna', compact('user', 'dataLomba', 'dataNomorLomba','dataNomorLombaByJuri','dataLombaByJuri'));
     }
 
     public function tambah(): View
@@ -382,9 +409,10 @@ class PenggunaController extends Controller
         $dataLomba = $this->namaLomba();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataRole = $this->dataRole();
         $dataUniv = $this->dataUniv();
-        return view('Pengguna.TambahPengguna', compact('dataLomba', 'dataNomorLomba', 'dataRole', 'dataUniv', 'dataNomorLombaByJuri'));
+        return view('Pengguna.TambahPengguna', compact('dataLomba', 'dataNomorLomba', 'dataRole', 'dataUniv', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function simpan(Request $request): RedirectResponse
@@ -414,9 +442,10 @@ class PenggunaController extends Controller
         $dataLomba = $this->namaLomba();
         $dataNomorLomba = $this->dataPeserta();
         $dataNomorLombaByJuri = $this->dataNilaiLombaByJuri();
+        $dataLombaByJuri = $this->namaLombaByJuri();
         $dataRole = $this->dataRole();
         $dataUniv = $this->dataUniv();
-        return view('Pengguna.EditPengguna', compact('query', 'dataNomorLomba', 'dataLomba', 'dataRole', 'dataUniv', 'dataNomorLombaByJuri'));
+        return view('Pengguna.EditPengguna', compact('query', 'dataNomorLomba', 'dataLomba', 'dataRole', 'dataUniv', 'dataNomorLombaByJuri', 'dataLombaByJuri'));
     }
 
     public function update($id, Request $request): RedirectResponse
@@ -435,9 +464,12 @@ class PenggunaController extends Controller
 
     public function hapus($id): RedirectResponse
     {
-        $query = User::query()->find($id);
-        $query->delete();
+        $idRole = Auth::user()->id_role;
+        if ($idRole == 1){
+            $query = User::query()->find($id);
+            $query->delete();
+            return redirect()->route('dataUsers');
+        }
         return redirect()->route('dataUsers');
     }
-
 }

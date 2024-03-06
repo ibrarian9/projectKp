@@ -39,10 +39,18 @@
                     Form Penilaian Peserta Lomba {{ str($namaLomba->nomor_lomba)}}
                 </h6>
             </div>
-
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable">
+                    <div class="form-group w-25">
+                        <label for="id_univ">Universitas</label>
+                        <select name="id_univ" id="id_univ" class="form-control" required>
+                            <option value="">Select Universitas</option>
+                            @foreach($dataUniv as $i)
+                                <option value="{{ $i->id_universitas }}">{{$i->nama_universitas}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <table class="table table-bordered" id="tabPeserta">
                         <thead>
                         <tr>
                             <th class="text-center">No</th>
